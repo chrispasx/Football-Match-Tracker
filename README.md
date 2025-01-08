@@ -7,7 +7,6 @@ A web application for tracking football matches, built with React and Node.js.
 - View upcoming matches and match history
 - Track match scores and goal scorers
 - Admin dashboard for managing matches
-- Real-time statistics tracking
 - Responsive design with Tailwind CSS
 - Secure authentication system
 
