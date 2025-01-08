@@ -30,7 +30,7 @@ A web application for tracking football matches, built with React and Node.js.
 
 1. Clone the repository:
 ```sh
-git clone [your-repo-url]
+git clone https://github.com/chrispasx/mpala
 ```
 
 2. Install dependencies for both frontend and backend:
