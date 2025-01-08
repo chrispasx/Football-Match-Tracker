@@ -1,8 +1,15 @@
+require('dotenv').config();
+
+// Check for required environment variables
+if (!process.env.ADMIN_PASSWORD) {
+  console.error('ADMIN_PASSWORD environment variable is not set');
+  console.error('Please create a .env file with ADMIN_PASSWORD=your-password');
+  process.exit(1);
+}
+
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
-require('dotenv').config();
-
 
 const app = express();
 const PORT = 5000;
@@ -52,10 +59,11 @@ try {
 
     db.run(`
       CREATE TABLE IF NOT EXISTS next_match (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY CHECK (id = 1),
         date TEXT NOT NULL,
         opponent TEXT NOT NULL,
-        time TEXT NOT NULL
+        time TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
   });
@@ -66,19 +74,27 @@ try {
 
 // Improved input validation middleware
 const validateMatch = (req, res, next) => {
-  const { date, opponent, score } = req.body;
+  const { date, opponent, score, scorers } = req.body;
 
   if (!date || !opponent || !score) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  // Stricter date validation
+  // Stricter input validation
+  if (typeof opponent !== 'string' || opponent.length > 100) {
+    return res.status(400).json({ error: 'Invalid opponent name' });
+  }
+
+  if (scorers && (typeof scorers !== 'string' || scorers.length > 500)) {
+    return res.status(400).json({ error: 'Invalid scorers format' });
+  }
+
+  // Existing date and score validation
   const dateObj = new Date(date);
   if (isNaN(dateObj.getTime()) || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return res.status(400).json({ error: 'Invalid date format. Use YYYY-MM-DD' });
   }
 
-  // Stricter score validation
   if (!/^\d{1,2}-\d{1,2}$/.test(score)) {
     return res.status(400).json({ error: 'Invalid score format. Use X-Y (max 2 digits)' });
   }
@@ -130,7 +146,8 @@ app.post('/authenticate', (req, res) => {
 
 
 app.get('/matches', (req, res) => {
-  db.all('SELECT * FROM matches ORDER BY date DESC', [], (err, rows) => {
+  const sql = 'SELECT * FROM matches ORDER BY date DESC';
+  db.all(sql, [], (err, rows) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
@@ -153,6 +170,29 @@ app.post('/matches', validatePassword, validateMatch, (req, res) => {
         id: this.lastID,
         message: 'Match added successfully'
       });
+    });
+  });
+});
+
+app.put('/matches/:id', validatePassword, validateMatch, (req, res) => {
+  const { id } = req.params;
+  const { date, opponent, score, scorers } = req.body;
+
+  if (!id || isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid match ID' });
+  }
+
+  db.serialize(() => {
+    const sql = 'UPDATE matches SET date = ?, opponent = ?, score = ?, scorers = ? WHERE id = ?';
+    db.run(sql, [date, opponent, score, scorers || null, id], function(err) {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Failed to update match' });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: 'Match not found' });
+      }
+      res.json({ message: 'Match updated successfully' });
     });
   });
 });
@@ -193,22 +233,16 @@ app.post('/next-match', validatePassword, validateNextMatch, (req, res) => {
   const { date, opponent, time } = req.body;
 
   db.serialize(() => {
-    db.run('DELETE FROM next_match', [], function (err) {
+    // Use INSERT OR REPLACE to handle upsert with id=1
+    const sql = `INSERT OR REPLACE INTO next_match (id, date, opponent, time) VALUES (1, ?, ?, ?)`;
+    db.run(sql, [date, opponent, time], function (err) {
       if (err) {
         console.error('Database error:', err);
         return res.status(500).json({ error: 'Failed to update next match' });
       }
-
-      const sql = 'INSERT INTO next_match (date, opponent, time) VALUES (?, ?, ?)';
-      db.run(sql, [date, opponent, time], function (err) {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).json({ error: 'Failed to add next match' });
-        } ``
-        res.status(201).json({
-          id: this.lastID,
-          message: 'Next match updated successfully'
-        });
+      res.status(201).json({
+        id: 1,
+        message: 'Next match updated successfully'
       });
     });
   });

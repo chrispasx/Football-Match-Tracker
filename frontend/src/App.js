@@ -14,6 +14,7 @@ const App = () => {
     time: '15:00'
   });
   const [adminToken, setAdminToken] = useState('');
+  const [editingMatch, setEditingMatch] = useState(null);
 
   useEffect(() => {
     fetchMatches();
@@ -21,13 +22,16 @@ const App = () => {
   }, []);
 
   const fetchMatches = async () => {
+    setLoading(true);
     try {
       const res = await fetch('http://localhost:5000/matches');
       if (!res.ok) throw new Error('Failed to fetch matches');
       const data = await res.json();
       setMatches(data);
+      setError(null);
     } catch (err) {
       setError(err.message);
+      setMatches([]);
     } finally {
       setLoading(false);
     }
@@ -65,11 +69,14 @@ const App = () => {
       })
       .then((data) => {
         setIsAdmin(true);
-        setAdminToken(adminPassword); // Store the token
+        setAdminToken(adminPassword); // Store the password as token since we're using it in headers
         setAdminPassword('');
         alert('Login successful');
       })
-      .catch((err) => alert(err.message));
+      .catch((err) => {
+        alert(err.message);
+        setAdminPassword('');
+      });
   };
 
   const handleAddMatch = async () => {
@@ -146,6 +153,49 @@ const App = () => {
     setShowAdminForm(false);
   };
 
+  const handleEdit = (match) => {
+    setEditingMatch(match);
+    setNewMatch(match);
+    setShowAdminForm(true);
+    window.scrollTo(0, document.body.scrollHeight);
+  };
+
+  const handleUpdateMatch = async () => {
+    if (!editingMatch) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/matches/${editingMatch.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'password': adminToken,
+        },
+        body: JSON.stringify(newMatch),
+      });
+
+      if (!res.ok) throw new Error('Failed to update match');
+      await fetchMatches();
+      setNewMatch({ date: '', opponent: '', score: '', scorers: '' });
+      setEditingMatch(null);
+      alert('Match updated successfully!');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (err) {
+      console.error('Date formatting error:', err);
+      return 'Date unavailable';
+    }
+  };
+
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (error) return <div className="text-red-500 text-center p-4">{error}</div>;
 
@@ -156,20 +206,16 @@ const App = () => {
           ΔΕΝ ΜΠΟΡΟΥΣΙΑΝ ΝΤΟΡΤΜΟΥΝΤ
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12 sticky top-16">
           {/* Next Match Section */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 sticky top-8">
+          <div className="lg:col-span-1 ">
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 sticky top-8 ">
               <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-6">
                 Next Match
               </h2>
               <div className="space-y-4">
                 <div className="text-gray-300 font-medium bg-gray-700 px-4 py-1 rounded-full inline-block">
-                  {new Date(nextMatch.date).toLocaleDateString('en-GB', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  })}
+                  {formatDate(nextMatch.date)}
                 </div>
                 <div className="text-2xl font-bold text-gray-100">
                   vs {nextMatch.opponent}
@@ -182,6 +228,32 @@ const App = () => {
                 </div>
               </div>
             </div>
+            <div className="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 sticky  mt-4">
+              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-6">Stats</h2>
+              <div className="grid grid-cols-2 gap-4 text-gray-300">
+                <div>
+                  <div className="text-2xl font-bold">4</div>
+                  <div>Wins</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">0</div>
+                  <div>Draws</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">8</div>
+                  <div>Losses</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">37</div>
+                  <div>Goals</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">71</div>
+                  <div>Goals Against</div>
+                </div>
+                </div>
+            </div>
+            
           </div>
 
           {/* Matches Grid - adjust column span */}
@@ -195,11 +267,7 @@ const App = () => {
                 <div className="flex justify-between items-start">
                   <div className="space-y-3">
                     <div className="text-gray-300 font-medium bg-gray-700 px-4 py-1 rounded-full inline-block">
-                      {new Date(match.date).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                      })}
+                      {formatDate(match.date)}
                     </div>
                     <div className="text-2xl font-bold text-gray-100">
                       vs {match.opponent}
@@ -216,13 +284,22 @@ const App = () => {
                     )}
                   </div>
                   {isAdmin && (
-                    <button
-                      onClick={() => handleDelete(match.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl
-                               transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-xl"
-                    >
-                      Delete
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(match)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl
+                                  transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-xl"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(match.id)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl
+                                  transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-xl"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -270,7 +347,9 @@ const App = () => {
         ) : showAdminForm && isAdmin ? (
           <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-gray-700/20">
             <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r 
-                          from-blue-400 to-purple-400 mb-6">Add New Match</h2>
+                          from-blue-400 to-purple-400 mb-6">
+              {editingMatch ? 'Edit Match' : 'Add New Match'}
+            </h2>
             <div className="grid gap-4">
               <input
                 type="date"
@@ -308,12 +387,24 @@ const App = () => {
                            bg-gray-700/50 backdrop-blur-sm text-white placeholder-gray-400"
               />
               <button
-                onClick={handleAddMatch}
+                onClick={editingMatch ? handleUpdateMatch : handleAddMatch}
                 className="w-full bg-gradient-to-r from-green-600 to-emerald-700 text-white py-4 rounded-xl
                            font-semibold transition-all duration-300 hover:shadow-xl hover:scale-[1.02] mt-2"
               >
-                Add Match
+                {editingMatch ? 'Update Match' : 'Add Match'}
               </button>
+              {editingMatch && (
+                <button
+                  onClick={() => {
+                    setEditingMatch(null);
+                    setNewMatch({ date: '', opponent: '', score: '', scorers: '' });
+                  }}
+                  className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-4 rounded-xl
+                            font-semibold transition-all duration-300 hover:shadow-xl hover:scale-[1.02] mt-2"
+                >
+                  Cancel Edit
+                </button>
+              )}
             </div>
             <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r 
                           from-blue-400 to-purple-400 mb-6 mt-8">Update Next Match</h2>
