@@ -1,78 +1,147 @@
 #  Match Tracker
 
-A web application for tracking football matches, built with React and Node.js.
+A modern, responsive web application for tracking football matches and team statistics. Built with React and Node.js, featuring real-time updates and an admin dashboard.
 
-## Features
+## 🌟 Features
 
-- View upcoming matches and match history
-- Track match scores and goal scorers
-- Admin dashboard for managing matches
-- Responsive design with Tailwind CSS
-- Secure authentication system
+- **Match Management**
+  - View upcoming matches with date and time
+  - Track match history and results
+  - Record scores and goal scorers
+  - Edit or delete past matches
 
-## Tech Stack
+- **Statistics Dashboard**
+  - Real-time win/loss/draw statistics
+  - Goal tracking (scored and conceded)
+  - Season performance overview
+
+- **Admin Features**
+  - Secure admin dashboard
+  - Match data management
+  - Next match scheduling
+  - Statistics updates
+
+- **User Interface**
+  - Modern, responsive design
+  - Real-time updates
+  - Mobile-friendly layout
+  - Smooth animations and transitions
+
+## 🚀 Tech Stack
 
 ### Frontend
-- React
-- Tailwind CSS
-- React Hooks
-- Modern ES6+ JavaScript
+- **React 18+** - Modern UI library
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Hooks** - State management and side effects
+- **Fetch API** - Data fetching and updates
 
 ### Backend
-- Node.js
-- Express
-- SQLite3
-- JSON Web Tokens
-- Environment Variables (dotenv)
+- **Node.js** - Runtime environment
+- **Express** - Web framework
+- **SQLite3** - Database
+- **CORS** - Cross-origin resource sharing
+- **dotenv** - Environment configuration
 
-## Getting Started
+## 📦 Installation
 
-1. Clone the repository:
-```sh
-git clone https://github.com/chrispasx/mpala
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd mpala
 ```
 
-2. Install dependencies for both frontend and backend:
-```sh
-# Install frontend dependencies
-cd frontend
-npm install
-
-# Install backend dependencies
-cd ../backend
+2. **Set up the backend**
+```bash
+cd backend
 npm install
 ```
 
-3. Create a `.env` file in the backend directory:
-```
-ADMIN_PASSWORD=your-secure-password
+3. **Create environment variables**
+```bash
+# Create .env file in backend directory
+echo "ADMIN_PASSWORD=your_secure_password" > .env
 ```
 
-4. Start the development servers:
-```sh
-# Start backend server (from backend directory)
+4. **Set up the frontend**
+```bash
+cd ../frontend
+npm install
+```
+
+## 🚦 Running the Application
+
+1. **Start the backend server**
+```bash
+cd backend
 node server.js
+```
 
-# Start frontend development server (from frontend directory)
+2. **Start the frontend development server**
+```bash
+cd frontend
 npm start
 ```
 
-The frontend will be available at `http://localhost:3000` and the backend at `http://localhost:5000`.
+3. **Access the application**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
 
-## Project Structure
+## 📁 Project Structure
+
 ```
-├── backend/
-│   ├── server.js
+mpala/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Stats.jsx
+│   │   │   └── ... 
+│   │   ├── App.js
+│   │   └── index.js
+│   ├── public/
 │   └── package.json
-└── frontend/
-    ├── src/
-    │   ├── App.js
-    │   └── index.js
+│
+└── backend/
+    ├── server.js
+    ├── football.db
+    ├── .env
     └── package.json
 ```
 
-## License
-MIT
+## 🔑 API Endpoints
 
-## Author
-Christodoulos Paschalis
+- `GET /matches` - Retrieve all matches
+- `POST /matches` - Add a new match
+- `PUT /matches/:id` - Update match details
+- `DELETE /matches/:id` - Delete a match
+- `GET /next-match` - Get upcoming match
+- `POST /next-match` - Update upcoming match
+- `GET /stats` - Get team statistics
+- `POST /stats` - Update team statistics
+- `POST /authenticate` - Admin authentication
+
+## 🛠️ Development
+
+- Follow ESLint rules for code consistency
+- Use meaningful commit messages
+- Test new features before pushing
+- Keep dependencies updated
+
+## 📝 License
+
+MIT License - See LICENSE file for details
+
+## 👥 Contributors
+
+- Christodoulos Paschalis - Developer & Maintainer
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📞 Support
+
+For support or questions, please email [your-email@example.com]
