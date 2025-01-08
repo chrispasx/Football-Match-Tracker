@@ -261,7 +261,7 @@ const App = () => {
             {matches.map((match) => (
               <div
                 key={match.id}
-                className="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 transform transition-all duration-300 
+                className="bg-gray-800/80 rounded-2xl shadow-xl p-8 transform transition-all duration-300 
                            hover:scale-[1.02] hover:shadow-2xl border border-gray-700/20"
               >
                 <div className="flex justify-between items-start">
