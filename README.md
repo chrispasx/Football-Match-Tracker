@@ -1,4 +1,4 @@
-#  Match Tracker
+#  Football Match Tracker
 
 A modern, responsive web application for tracking football matches and team statistics. Built with React and Node.js, featuring real-time updates and an admin dashboard.
 
@@ -125,6 +125,7 @@ mpala/
 - Use meaningful commit messages
 - Test new features before pushing
 - Keep dependencies updated
+- Weekly updates with new features, bug fixes, and code improvements.
 
 ## 📝 License
 
@@ -142,6 +143,4 @@ MIT License - See LICENSE file for details
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📞 Support
 
-For support or questions, please email [your-email@example.com]
