@@ -66,6 +66,18 @@ try {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    db.run(`
+      CREATE TABLE IF NOT EXISTS stats(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      wins INTEGER NOT NULL,
+      draws INTEGER NOT NULL,
+      losses INTEGER NOT NULL,
+      goals INTEGER NOT NULL,
+      goalsAgainst INTEGER NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+      `)
   });
 } catch (err) {
   console.error('Failed to initialize database:', err);
@@ -129,6 +141,22 @@ const validatePassword = (req, res, next) => {
   if (!password || password !== process.env.ADMIN_PASSWORD) {
     return res.status(403).json({ error: 'Forbidden: Unauthorized access' });
   }
+  next();
+};
+
+// Add this validation middleware before the stats routes
+const validateStats = (req, res, next) => {
+  const { wins, draws, losses, goals, goalsAgainst } = req.body;
+
+  if (!Number.isInteger(wins) || !Number.isInteger(draws) || !Number.isInteger(losses) ||
+      !Number.isInteger(goals) || !Number.isInteger(goalsAgainst)) {
+    return res.status(400).json({ error: 'All stats must be valid integers' });
+  }
+
+  if (wins < 0 || draws < 0 || losses < 0 || goals < 0 || goalsAgainst < 0) {
+    return res.status(400).json({ error: 'Stats cannot be negative' });
+  }
+
   next();
 };
 
@@ -247,6 +275,36 @@ app.post('/next-match', validatePassword, validateNextMatch, (req, res) => {
     });
   });
 });
+
+app.get('/stats', (req, res) => {
+  db.get('SELECT * FROM stats ORDER BY id DESC LIMIT 1', [], (err, row) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+    res.json(row || { wins: 0, draws: 0, losses: 0, goals: 0, goalsAgainst: 0 });
+  });
+});
+
+// Update the POST route to use validation
+app.post('/stats', validatePassword, validateStats, (req, res) => {
+  const { wins, draws, losses, goals, goalsAgainst } = req.body;
+
+  db.serialize(() => {
+    const sql = 'INSERT INTO stats (wins, draws, losses, goals, goalsAgainst) VALUES (?, ?, ?, ?, ?)';
+    db.run(sql, [wins, draws, losses, goals, goalsAgainst], function (err) {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Failed to add stats' });
+      }
+      res.status(201).json({
+        id: this.lastID,
+        message: 'Stats added successfully'
+      });
+    });
+  });
+});
+
 
 // Graceful shutdown
 process.on('SIGINT', () => {
