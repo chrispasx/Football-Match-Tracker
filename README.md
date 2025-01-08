@@ -1,4 +1,4 @@
-# ΔΕΝ ΜΠΟΡΟΥΣΙΑΝ ΝΤΟΡΤΜΟΥΝΤ - Match Tracker
+#  Match Tracker
 
 A web application for tracking football matches, built with React and Node.js.
 
