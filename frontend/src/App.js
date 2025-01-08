@@ -445,7 +445,14 @@ const App = () => {
           </div>
         ) : null}
       </div>
+
+      <footer className=" px-8 text-center text-gray-400 border-t border-gray-800">
+        <p className="text-sm font-medium hover:text-gray-300 transition-colors duration-300 hover:cursor-default">
+          &copy; {new Date().getFullYear()} ΔΕΝ ΜΠΟΡΟΥΣΙΑΝ ΝΤΟΡΤΜΟΥΝΤ
+        </p>
+      </footer>
     </div>
+
   );
 };
 
