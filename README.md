@@ -46,7 +46,7 @@ A modern, responsive web application for tracking football matches and team stat
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/chrispasx/Football-Match-Tracker
 cd mpala
 ```
 
