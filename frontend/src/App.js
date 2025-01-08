@@ -55,7 +55,7 @@ const App = () => {
       alert('Please enter the admin password!');
       return;
     }
-  
+
     fetch('http://localhost:5000/authenticate', {
       method: 'POST',
       headers: {
@@ -251,9 +251,9 @@ const App = () => {
                   <div className="text-2xl font-bold">71</div>
                   <div>Goals Against</div>
                 </div>
-                </div>
+              </div>
             </div>
-            
+
           </div>
 
           {/* Matches Grid - adjust column span */}
@@ -315,7 +315,7 @@ const App = () => {
               setShowAdminForm(!showAdminForm);
             }
           }}
-          className="fixed top-6 right-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white 
+          className="absolute top-6 right-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white 
                      px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 
                      text-sm font-semibold hover:scale-105"
         >
