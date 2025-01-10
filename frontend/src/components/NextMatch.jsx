@@ -1,6 +1,6 @@
 const NextMatch = ({ nextMatch, formatDate }) => {
   return (
-    <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-md rounded-3xl shadow-2xl p-8 sticky top-8 border border-gray-700/30 hover:border-gray-600/50 transition-all duration-500 hover:transform hover:scale-[1.02]">
+    <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-md rounded-3xl shadow-2xl p-8 sticky top-8 border border-gray-700/30 hover:border-gray-600/50 transition-all duration-500 hover:transform ">
       <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-8">
         Next Match
       </h2>
