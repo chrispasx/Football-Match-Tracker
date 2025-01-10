@@ -236,7 +236,7 @@ const App = () => {
         <Header />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
-          {/* Next Match Section */}
+          {/* Next Match Section ,Stats Section */}
           <div className="lg:col-span-1">
             <NextMatch nextMatch={nextMatch} formatDate={formatDate} />
             <Stats />
@@ -244,7 +244,7 @@ const App = () => {
 
           {/* Matches Grid */}
           <div className="lg:col-span-3">
-            <MatchList 
+            <MatchList
               matches={matches}
               isAdmin={isAdmin}
               handleEdit={handleEdit}
@@ -467,7 +467,7 @@ const App = () => {
 
       <footer className=" px-8 text-center text-gray-400 border-t border-gray-800">
         <p className="text-sm font-medium hover:text-gray-300 transition-colors duration-300 hover:cursor-default">
-          &copy; {new Date().getFullYear()} ΔΕΝ ΜΠΟΡΟΥΣΙΑΝ ΝΤΟΡΤΜΟΥΝΤ
+          &copy; {new Date().getFullYear()} Christodoulos Paschalis
         </p>
       </footer>
     </div>
