@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Stats from './components/Stats';
+import Header from './components/Header';
+import NextMatch from './components/NextMatch';
+import MatchList from './components/MatchList';
 
 const App = () => {
   const [matches, setMatches] = useState([]);
@@ -77,7 +80,7 @@ const App = () => {
         if (!res.ok) throw new Error('Invalid password');
         return res.json();
       })
-      .then((data) => {
+      .then(() => {
         setIsAdmin(true);
         setAdminToken(adminPassword); // Store the password as token since we're using it in headers
         setAdminPassword('');
@@ -230,90 +233,26 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 py-16 px-4">
       <div className="container mx-auto max-w-7xl">
-        <h1 className="text-6xl font-black text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-16 tracking-tighter hover:scale-105 transition-transform duration-300">
-          Footbal Match Tracker
-        </h1>
+        <Header />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
           {/* Next Match Section */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-800/60 backdrop-blur-md rounded-3xl shadow-2xl p-8 sticky top-8 border border-gray-700/30 hover:border-gray-600/50 transition-all duration-500">
-              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-6">
-                Next Match
-              </h2>
-              <div className="space-y-4">
-                <div className="text-gray-300 font-medium bg-gray-700/50 backdrop-blur-sm px-4 py-2 rounded-2xl inline-block shadow-lg">
-                  {formatDate(nextMatch.date)}
-                </div>
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-300">
-                  vs {nextMatch.opponent}
-                </div>
-                <div className="text-gray-300">
-                  <div className="flex items-center gap-2 mb-2 bg-gray-700/30 p-3 rounded-2xl">
-                    <span className="text-blue-400">🕒</span>
-                    <span className="font-medium">{nextMatch.time}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <NextMatch nextMatch={nextMatch} formatDate={formatDate} />
             <Stats />
           </div>
 
           {/* Matches Grid */}
-          <div className="lg:col-span-3 grid gap-8">
-            {matches.map((match) => (
-              <div
-                key={match.id}
-                className="bg-gray-800/60 backdrop-blur-md rounded-3xl shadow-2xl p-8 
-                           transform transition-all duration-500 hover:scale-[1.02] 
-                           hover:shadow-2xl border border-gray-700/30 hover:border-gray-600/50"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="space-y-4">
-                    <div className="text-gray-300 font-medium bg-gray-700/50 backdrop-blur-sm 
-                                  px-4 py-2 rounded-2xl inline-block shadow-lg">
-                      {formatDate(match.date)}
-                    </div>
-                    <div className="text-3xl font-bold text-transparent bg-clip-text 
-                                  bg-gradient-to-r from-gray-100 to-gray-300">
-                      vs {match.opponent}
-                    </div>
-                    <div className="text-4xl font-black bg-gradient-to-r from-blue-400 via-purple-400 
-                                  to-pink-400 text-transparent bg-clip-text">
-                      {match.score}
-                    </div>
-                    {match.scorers && (
-                      <div className="text-gray-300 mt-2 flex items-center gap-2 
-                                    bg-gray-700/30 p-3 rounded-2xl">
-                        <span className="text-blue-400 text-xl">⚽</span>
-                        <span className="font-medium">{match.scorers}</span>
-                      </div>
-                    )}
-                  </div>
-                  {isAdmin && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(match)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl
-                                  transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-xl"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(match.id)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl
-                                  transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-xl"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+          <div className="lg:col-span-3">
+            <MatchList 
+              matches={matches}
+              isAdmin={isAdmin}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              formatDate={formatDate}
+            />
           </div>
         </div>
-
         <button
           onClick={() => {
             if (showAdminForm && isAdmin) {
@@ -454,63 +393,63 @@ const App = () => {
             <div className="grid grid-cols-2 gap-4">
               <label className='text-white text-center font-bold text-2xl'>
                 Wins
-              <input
-                type="number"
-                placeholder="Wins"
-                value={stats.wins}
-                onChange={(e) => setStats({ ...stats, wins: parseInt(e.target.value) || 0 })}
-                className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
+                <input
+                  type="number"
+                  placeholder="Wins"
+                  value={stats.wins}
+                  onChange={(e) => setStats({ ...stats, wins: parseInt(e.target.value) || 0 })}
+                  className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
                           focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300
                           bg-gray-700/50 backdrop-blur-sm text-white placeholder-gray-400"
-              />
+                />
               </label>
               <label className='text-white text-center font-bold text-2xl'>
-              Draws
-              <input
-                type="number"
-                placeholder="Draws"
-                value={stats.draws}
-                onChange={(e) => setStats({ ...stats, draws: parseInt(e.target.value) || 0 })}
-                className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
+                Draws
+                <input
+                  type="number"
+                  placeholder="Draws"
+                  value={stats.draws}
+                  onChange={(e) => setStats({ ...stats, draws: parseInt(e.target.value) || 0 })}
+                  className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
                           focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300
                           bg-gray-700/50 backdrop-blur-sm text-white placeholder-gray-400"
-              />
+                />
               </label>
               <label className='text-white text-center font-bold text-2xl'>
                 Losses
-              <input
-                type="number"
-                placeholder="Losses"
-                value={stats.losses}
-                onChange={(e) => setStats({ ...stats, losses: parseInt(e.target.value) || 0 })}
-                className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
+                <input
+                  type="number"
+                  placeholder="Losses"
+                  value={stats.losses}
+                  onChange={(e) => setStats({ ...stats, losses: parseInt(e.target.value) || 0 })}
+                  className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
                           focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300
                           bg-gray-700/50 backdrop-blur-sm text-white placeholder-gray-400"
-              />
+                />
               </label>
               <label className='text-white text-center font-bold text-2xl'>
                 Goals Scored
-              <input
-                type="number"
-                placeholder="Goals Scored"
-                value={stats.goals}
-                onChange={(e) => setStats({ ...stats, goals: parseInt(e.target.value) || 0 })}
-                className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
+                <input
+                  type="number"
+                  placeholder="Goals Scored"
+                  value={stats.goals}
+                  onChange={(e) => setStats({ ...stats, goals: parseInt(e.target.value) || 0 })}
+                  className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
                           focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300
                           bg-gray-700/50 backdrop-blur-sm text-white placeholder-gray-400"
-              />
+                />
               </label>
               <label className='text-white text-center font-bold text-2xl' >
                 Goals Against
-              <input
-                type="number"
-                placeholder="Goals Against"
-                value={stats.goalsAgainst}
-                onChange={(e) => setStats({ ...stats, goalsAgainst: parseInt(e.target.value) || 0 })}
-                className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
+                <input
+                  type="number"
+                  placeholder="Goals Against"
+                  value={stats.goalsAgainst}
+                  onChange={(e) => setStats({ ...stats, goalsAgainst: parseInt(e.target.value) || 0 })}
+                  className="w-full p-4 border border-gray-700 rounded-xl focus:ring-2 
                           focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300
                           bg-gray-700/50 backdrop-blur-sm text-white placeholder-gray-400"
-              />
+                />
               </label>
             </div>
             <button
@@ -532,7 +471,7 @@ const App = () => {
         </p>
       </footer>
     </div>
-    
+
 
   );
 };
