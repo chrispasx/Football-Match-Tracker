@@ -232,7 +232,7 @@ const App = () => {
   if (error) return <div className="text-red-500 text-center p-4">{error}</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 py-16 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 py-20 px-6">
       <div className="container mx-auto max-w-7xl">
         <NavBar 
           isAdmin={isAdmin}
@@ -242,14 +242,14 @@ const App = () => {
         />
         <Header />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 mb-16">
           {/* Next Match Section */}
-          <div className="lg:col-span-1 mt-8">
+          <div className="lg:col-span-1">
             <NextMatch nextMatch={nextMatch} formatDate={formatDate} />
           </div>
 
           {/* Matches Grid */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-8">
             <MatchList
               matches={matches}
               isAdmin={isAdmin}
