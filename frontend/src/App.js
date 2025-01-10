@@ -243,14 +243,13 @@ const App = () => {
         <Header />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
-          {/* Next Match Section ,Stats Section */}
-          <div className="lg:col-span-1">
+          {/* Next Match Section */}
+          <div className="lg:col-span-1 mt-8">
             <NextMatch nextMatch={nextMatch} formatDate={formatDate} />
-            <Stats />
           </div>
 
           {/* Matches Grid */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-2">
             <MatchList
               matches={matches}
               isAdmin={isAdmin}
@@ -259,7 +258,13 @@ const App = () => {
               formatDate={formatDate}
             />
           </div>
+          
+          {/* Stats Section */}
+          <div className="lg:col-span-1">
+            <Stats />
+          </div>
         </div>
+        
 
         {showAdminForm && !isAdmin ? (
           <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-gray-700/20 
