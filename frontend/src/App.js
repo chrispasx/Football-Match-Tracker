@@ -3,6 +3,7 @@ import Stats from './components/Stats';
 import Header from './components/Header';
 import NextMatch from './components/NextMatch';
 import MatchList from './components/MatchList';
+import NavBar from './components/NavBar';
 
 const App = () => {
   const [matches, setMatches] = useState([]);
@@ -233,6 +234,12 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 py-16 px-4">
       <div className="container mx-auto max-w-7xl">
+        <NavBar 
+          isAdmin={isAdmin}
+          showAdminForm={showAdminForm}
+          handleLogout={handleLogout}
+          setShowAdminForm={setShowAdminForm}
+        />
         <Header />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
@@ -253,20 +260,6 @@ const App = () => {
             />
           </div>
         </div>
-        <button
-          onClick={() => {
-            if (showAdminForm && isAdmin) {
-              handleLogout();
-            } else {
-              setShowAdminForm(!showAdminForm);
-            }
-          }}
-          className="absolute top-6 right-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white 
-                     px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 
-                     text-sm font-semibold hover:scale-105"
-        >
-          {showAdminForm ? 'Close Admin' : 'Admin Login'}
-        </button>
 
         {showAdminForm && !isAdmin ? (
           <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-gray-700/20 
