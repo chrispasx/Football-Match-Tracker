@@ -41,7 +41,7 @@ const Stats = () => {
     };
 
     return (
-        <div className=" sticky top-8 bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sticky mt-4 border border-gray-700/30 hover:border-gray-600/50 transition-all duration-500">
+        <div className=" sticky top-8 bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8  mt-4 border border-gray-700/30 hover:border-gray-600/50 transition-all duration-500">
             <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-8">Team Stats</h2>
             {error && <div className="text-red-400 mb-4 bg-red-900/20 p-3 rounded-xl">{error}</div>}
             <div className="grid grid-cols-2 gap-6 text-gray-300">
