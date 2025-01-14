@@ -59,7 +59,7 @@ try {
 
     db.run(`
       CREATE TABLE IF NOT EXISTS next_match (
-        id INTEGER PRIMARY KEY CHECK (id = 1),
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT NOT NULL,
         opponent TEXT NOT NULL,
         time TEXT NOT NULL,
@@ -261,16 +261,24 @@ app.post('/next-match', validatePassword, validateNextMatch, (req, res) => {
   const { date, opponent, time } = req.body;
 
   db.serialize(() => {
-    // Use INSERT OR REPLACE to handle upsert with id=1
-    const sql = `INSERT OR REPLACE INTO next_match (id, date, opponent, time) VALUES (1, ?, ?, ?)`;
-    db.run(sql, [date, opponent, time], function (err) {
+    // First, delete any existing next match
+    db.run('DELETE FROM next_match', [], (err) => {
       if (err) {
         console.error('Database error:', err);
         return res.status(500).json({ error: 'Failed to update next match' });
       }
-      res.status(201).json({
-        id: 1,
-        message: 'Next match updated successfully'
+
+      // Then insert the new next match
+      const sql = `INSERT INTO next_match (date, opponent, time) VALUES (?, ?, ?)`;
+      db.run(sql, [date, opponent, time], function (err) {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).json({ error: 'Failed to update next match' });
+        }
+        res.status(201).json({
+          id: this.lastID,
+          message: 'Next match updated successfully'
+        });
       });
     });
   });
