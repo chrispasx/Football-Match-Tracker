@@ -1,4 +1,4 @@
-# ΔΕΝ ΜΠΟΡΟΥΣΙΑΝ ΝΤΟΡΤΜΟΥΝΤ - Match Tracker
+# - Match Tracker
 
 A modern, responsive web application for tracking football matches and team statistics. Built with React and Node.js, featuring real-time updates and an admin dashboard.
 
